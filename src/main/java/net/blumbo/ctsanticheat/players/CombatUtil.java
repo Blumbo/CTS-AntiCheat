@@ -6,14 +6,15 @@ import net.minecraft.world.phys.Vec3;
 
 public class CombatUtil {
 
-    // Optimal amount of ticks is the highest accepted ping in ms divided by 50 plus one
-    // e.g. for 200ms it would be 5, for 300ms would be 7 etc.
-    public static int savedPositionAmount = 9;
+    // The amount of ticks players' previous locations are saved for
+    // A somewhat good rule for the optimal amount of ticks is ceiling(x/50ms) + 2
+    // where x is the highest ping (in milliseconds) the anticheat takes into account.
+    // E.g. if the highest "accepted" ping is 151ms-200ms this number would be 6, for 251-300ms it would be 8 etc.
+    public static int savedLocationTicks = 9;
 
     // If target is not in reach (possibly due to ping) check if target's previous locations are in reach
     public static boolean allowReach(ServerPlayer attacker, ServerPlayer target) {
         Vec3 eyePosition = attacker.getEyePosition(0);
-
         double reach = attacker.getCurrentAttackReach(1f);
         if (!attacker.canSee(target)) reach = 2.5;
         reach *= reach;
@@ -21,7 +22,6 @@ public class CombatUtil {
         if (canReach(eyePosition, target.getBoundingBox(), reach)) return true;
 
         PlayerData victimData = PlayerData.get(target);
-        System.out.println(victimData.positionIndex);
         for (AABB boundingBox : victimData.previousPositions) {
             if (boundingBox == null) continue;
             if (canReach(eyePosition, boundingBox, reach)) return true;

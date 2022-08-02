@@ -12,7 +12,7 @@ public class PlayerData {
     public int positionIndex;
 
     public PlayerData() {
-        this.previousPositions = new AABB[CombatUtil.savedPositionAmount];
+        this.previousPositions = new AABB[CombatUtil.savedLocationTicks];
         this.positionIndex = 0;
     }
 
